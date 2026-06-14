@@ -42,12 +42,21 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
     'api',
      "rest_framework",
      "corsheaders",
      'rest_framework_simplejwt',
      'rest_framework.authtoken',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    # Social Providers 
+    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.github',   
+    'allauth.socialaccount.providers.facebook',
 ]
+SITE_ID = 1
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
@@ -58,6 +67,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'elearning.urls'
@@ -83,19 +93,19 @@ WSGI_APPLICATION = 'elearning.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
-
 # DATABASES = {
-#     'default': dj_database_url.config(
-#         default=os.environ.get('DATABASE_URL'),
-#         conn_max_age=600
-#     )
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
 # }
+
+DATABASES = {
+    'default': dj_database_url.config(
+        default=os.environ.get('DATABASE_URL'),
+        conn_max_age=600
+    )
+}
 
 
 # Password validation
@@ -154,6 +164,13 @@ REST_FRAMEWORK = {
 #         'rest_framework.permissions.AllowAny',
 #     ),
 # }
+
+AUTHENTICATION_BACKENDS = [
+    # សម្រាប់ Login តាមវិធីធម្មតារបស់ Django (Username/Password)
+    'django.contrib.auth.backends.ModelBackend',
+    # សម្រាប់ដោះស្រាយការ Login តាមរយៈ Allauth (Email ឬ Social Logins)
+   'allauth.account.auth_backends.AuthenticationBackend',
+]
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=40),
