@@ -1,5 +1,12 @@
 from rest_framework import serializers
-from .models import CourseName, FullCourse,Videolist, BookCategory, Book,Notification
+from .models import (
+    CourseName, FullCourse,Videolist, 
+    BookCategory, Book,Notification,
+    Question,
+    Quiz,
+    Choice,
+    QuizSubmission,
+)
 
 
 class VideoListSerializer(serializers.ModelSerializer):
@@ -36,7 +43,30 @@ class  BookCategorySerializer(serializers.ModelSerializer) :
 
 class NotificationSerializer(serializers.ModelSerializer):
     class Meta :
+        model = Notification
         fields = "__all__"
+        
+
+class QuizSerializer(serializers.ModelSerializer) :
+    class Meta :
+        model = Quiz
+        fields = [' lesson', 'title','duration_minutes','created_at']
+
+
+class QuestionSerializer(serializers.ModelSerializer) :
+    class Meta :
+        model = Question
+        fields = ['quiz',' question_text ','order']
+
+class ChoiceSerializer(serializers.ModelSerializer) :
+    class Meta :
+        madel = Choice
+        fields = ['question','prefix',' choice_text','is_correct ']
+
+class QuizSubmissionSerializer(serializers.ModelSerializer) :
+    class Meta :
+        madel = QuizSubmission
+        fields = '__all__'
 
 
 

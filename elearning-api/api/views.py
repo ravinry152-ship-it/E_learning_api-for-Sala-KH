@@ -5,6 +5,11 @@ from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly, IsAu
 from rest_framework_simplejwt.tokens import RefreshToken
 from .models import CourseName, FullCourse, BookCategory, Book,Videolist, Notification
 from django.contrib.auth.models import User
+from dj_rest_auth.registration.views import SocialLoginView # pyright: ignore[reportMissingImports]
+from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
+from allauth.socialaccount.providers.facebook.views import FacebookOAuth2Adapter
+from allauth.socialaccount.providers.github.views import GitHubOAuth2Adapter
+from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from .serializer import CourseNameSerializer, FullCourseSerializer, VideoListSerializer,BookCategorySerializer,BookSerializer,NotificationSerializer
 class Register(APIView) :
     permission_classes = [AllowAny] 
@@ -65,7 +70,23 @@ class Login(APIView) :
                 return Response({
                     'error': "ពាក្យសម្ងាត់មិនត្រឹមត្រូវទេ"
                 }, status=status.HTTP_400_BAD_REQUEST)
-            
+#======================Login and Signup  with  socail media=======================
+# 1. Google Login View
+class GoogleLogin(SocialLoginView):
+    adapter_class = GoogleOAuth2Adapter
+    callback_url = "http://127.0.0.1:8000/accounts/google/login/callback/" 
+    client_class = OAuth2Client
+
+# 2. Facebook Login View
+class FacebookLogin(SocialLoginView):
+    adapter_class = FacebookOAuth2Adapter
+
+# 3. GitHub Login View
+class GitHubLogin(SocialLoginView):
+    adapter_class = GitHubOAuth2Adapter
+    callback_url = "http://127.0.0.1:8000/accounts/github/login/callback/"
+    client_class = OAuth2Client
+#=========================Course Category=========================================           
 class CourseCategory(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request):

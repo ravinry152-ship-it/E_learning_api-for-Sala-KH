@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import FullCourseDetail, Register, Login, CourseCategory, CourseCategoryDetail,FullCourselist,Profile,VideoListView,VideoLisetDatail,CategoryBook,CategoryBookDetail,BookLibrary,BookLibraryDetail,NotificationApp
+from .views import FullCourseDetail, Register, Login, CourseCategory, CourseCategoryDetail,FullCourselist,Profile,VideoListView,VideoLisetDatail,CategoryBook,CategoryBookDetail,BookLibrary,BookLibraryDetail,NotificationApp,GoogleLogin, FacebookLogin, GitHubLogin
 from rest_framework_simplejwt.views import TokenRefreshView
 urlpatterns = [
     path('register/', Register.as_view()),
@@ -17,5 +17,8 @@ urlpatterns = [
     path('book/',BookLibrary.as_view()),
     path('book/<int:pk>/', BookLibraryDetail.as_view()),
     path('notification/',NotificationApp.as_view()),
+    path('auth/google/', GoogleLogin.as_view()),
+    path('auth/facebook/', FacebookLogin.as_view()),
+    path('auth/github/', GitHubLogin.as_view()),
 
 ]
