@@ -6,8 +6,13 @@ from .models import (
     Quiz,
     Choice,
     QuizSubmission,
+    MainCourse,
 )
 
+class MainCourseSerializer(serializers.ModelSerializer) :
+    class Meta :
+        model = MainCourse
+        fields = "__all__"
 
 class VideoListSerializer(serializers.ModelSerializer):
     category = serializers.CharField(source='course.course_name.course_name', read_only=True)
@@ -50,22 +55,24 @@ class NotificationSerializer(serializers.ModelSerializer):
 class QuizSerializer(serializers.ModelSerializer) :
     class Meta :
         model = Quiz
-        fields = [' lesson', 'title','duration_minutes','created_at']
+        fields = ['id',' lesson', 'title','duration_minutes','created_at']
 
 
-class QuestionSerializer(serializers.ModelSerializer) :
-    class Meta :
+class ChoiceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Choice
+        fields = ['id', 'question', 'prefix', 'choice_text']
+
+class QuestionSerializer(serializers.ModelSerializer):
+    choices = ChoiceSerializer(many=True, read_only=True)
+    class Meta:
         model = Question
-        fields = ['quiz',' question_text ','order']
-
-class ChoiceSerializer(serializers.ModelSerializer) :
-    class Meta :
-        madel = Choice
-        fields = ['question','prefix',' choice_text','is_correct ']
+        fields = ['id', 'question_text', 'order', 'choices']
 
 class QuizSubmissionSerializer(serializers.ModelSerializer) :
+    quiz_title = QuizSerializer(read_only=True)
     class Meta :
-        madel = QuizSubmission
+        model = QuizSubmission
         fields = '__all__'
 
 

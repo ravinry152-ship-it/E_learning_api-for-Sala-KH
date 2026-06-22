@@ -1,6 +1,12 @@
 from django.db import models
-from django.conf import Settings
 from django.contrib.auth.models import User
+
+class MainCourse(models.Model) :
+    id = models.AutoField(primary_key=True)
+    maincourse_name = models.CharField(max_length=200)
+    def __str__(self):
+        return  self.maincourse_name
+
 class CourseName(models.Model):
     id = models.AutoField(primary_key=True)
     course_name = models.CharField(max_length=200)
@@ -10,6 +16,9 @@ class CourseName(models.Model):
 class FullCourse(models.Model):
     id = models.AutoField(primary_key=True)
     course_name = models.ForeignKey(CourseName, on_delete=models.CASCADE,related_name='full_courses')
+    maincourse_name = models.ForeignKey(MainCourse,on_delete=models.CASCADE,related_name='full_courses',
+        null=True, 
+        blank=True)
     course_description = models.TextField()
     image = models.ImageField(upload_to='course_images/')
     def __str__(self):
@@ -47,6 +56,7 @@ class Notification(models.Model):
 
 
 class Quiz(models.Model):
+    id = models.AutoField(primary_key=True)
     lesson = models.ForeignKey(Videolist, on_delete=models.CASCADE, related_name="quizzes", verbose_name="ស្ថិតក្នុងមេរៀនណា")
     title = models.CharField(max_length=255, verbose_name="ចំណងជើងការធ្វើតេស្ត (ឧ. តេស្តសមត្ថភាពមេរៀនទី១)")
     duration_minutes = models.IntegerField(default=15, verbose_name="រយៈពេលធ្វើតេស្ត (នាទី)")
@@ -60,6 +70,7 @@ class Quiz(models.Model):
 
 
 class Question(models.Model):
+    id = models.AutoField(primary_key=True)
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, related_name="questions", verbose_name="ស្ថិតក្នុងកម្រងសំណួរណា")
     question_text = models.TextField(verbose_name="ខ្លឹមសារប្រធានសំណួរ")
     order = models.PositiveIntegerField(default=1, verbose_name="លំដាប់សំណួរ (ទី១, ទី២...)")
@@ -72,6 +83,7 @@ class Question(models.Model):
 
 
 class Choice(models.Model):
+    id = models.AutoField(primary_key=True)
     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name="choices", verbose_name="ជម្រើសរបស់សំណួរណា")
     prefix = models.CharField(max_length=2, verbose_name="តួអក្សរមុខ (A, B, C, D)")
     choice_text = models.CharField(max_length=255, verbose_name="ខ្លឹមសារចម្លើយ")
@@ -82,7 +94,7 @@ class Choice(models.Model):
 
 
 class QuizSubmission(models.Model):
-    user = models.ForeignKey(Settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="quiz_submissions", verbose_name="សិស្សដែលបានធ្វើ")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="quiz_submissions", verbose_name="សិស្សដែលបានធ្វើ")
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, related_name="submissions", verbose_name="វិញ្ញាសាដែលបានធ្វើ")
     score = models.IntegerField(verbose_name="ពិន្ទុដែលទទួលបាន (ពេញ ១០០)")
     total_questions = models.IntegerField(verbose_name="ចំនួនសំណួរសរុប")

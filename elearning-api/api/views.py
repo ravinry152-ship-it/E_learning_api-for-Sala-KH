@@ -3,14 +3,28 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
-from .models import CourseName, FullCourse, BookCategory, Book,Videolist, Notification
+from .models import (
+    CourseName, FullCourse, 
+    BookCategory, Book,Videolist,
+    Notification,
+    Question,
+    Quiz,
+    Choice,
+    QuizSubmission,
+)
 from django.contrib.auth.models import User
 from dj_rest_auth.registration.views import SocialLoginView # pyright: ignore[reportMissingImports]
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from allauth.socialaccount.providers.facebook.views import FacebookOAuth2Adapter
 from allauth.socialaccount.providers.github.views import GitHubOAuth2Adapter
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
-from .serializer import CourseNameSerializer, FullCourseSerializer, VideoListSerializer,BookCategorySerializer,BookSerializer,NotificationSerializer
+from .serializer import (
+    CourseNameSerializer, FullCourseSerializer,
+    VideoListSerializer,BookCategorySerializer,
+    BookSerializer,NotificationSerializer,
+    QuizSerializer,QuestionSerializer,
+    ChoiceSerializer,QuizSubmissionSerializer
+)
 class Register(APIView) :
     permission_classes = [AllowAny] 
     authentication_classes = []
@@ -129,19 +143,30 @@ class CourseCategoryDetail(APIView):
         course = self.get_object(pk)
         course.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-    
-class FullCourselist(APIView) :
+
+class FullCourselist(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request):
-        category_id = request.query_params.get('category_id')
-        
-        if category_id:
-            full_courses = FullCourse.objects.filter(category_id=category_id)
+        maincourse_id = request.query_params.get(
+            'maincourse_id'
+        )
+
+        if maincourse_id:
+            full_courses = FullCourse.objects.filter(
+                maincourse_name_id=maincourse_id
+            )
         else:
-            full_courses = FullCourse.objects.select_related('course_name').all()
-            
-        serializer = FullCourseSerializer(full_courses, many=True)
-        return Response({'full_courses': serializer.data}, status=status.HTTP_200_OK)
+            full_courses = FullCourse.objects.all()
+
+        serializer = FullCourseSerializer(
+            full_courses,
+            many=True,
+            context={'request': request}
+        )
+
+        return Response({
+            "full_courses": serializer.data
+        })
     def post(self, request, format= None):
         serializer= FullCourseSerializer(data=request.data)
         if serializer.is_valid():
@@ -196,12 +221,12 @@ class VideoListView(APIView):
     def get(self, request):
         queryset = Videolist.objects.all()
 
-        # 1. Filter តាម ID របស់ FullCourse (Ex: Python Full Course ID = 1)
+        #  Filter តាម ID របស់ FullCourse (Ex: Python Full Course ID = 1)
         course_id = request.query_params.get('course_id')
         if course_id:
             queryset = queryset.filter(course_id=course_id)
 
-        # 2. Filter តាមឈ្មោះប្រភេទធំ (Ex: course_name = Programming ឬ Design)
+        #  Filter តាមឈ្មោះប្រភេទធំ (course_name = Programming ឬ Design)
         category = request.query_params.get('category')
         if category:
             queryset = queryset.filter(course__course_name__course_name__iexact=category)
@@ -364,6 +389,233 @@ class NotificationApp(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         print(serializer.errors)
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST )
+    
+#===========================question Test for lesson======================
+class QuizTest(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        lesson_id = request.query_params.get('lesson_id')
+
+        quizzes = Quiz.objects.all()
+
+        if lesson_id:
+            quizzes = quizzes.filter(lesson_id=lesson_id)
+
+        serializer = QuizSerializer(quizzes, many=True)
+        return Response(serializer.data)
+    
+    def post(self ,request) :
+        serializer = QuizSerializer(data= request.data)
+        if serializer.is_valid() :
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        print(serializer.errors, "error")
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class QuizTestDetail(APIView) :
+    def get_object(self, pk):
+        try:
+            return Quiz.objects.get(pk=pk)
+        except Quiz.DoesNotExist:
+            return None
+        
+    def put(self, request,pk):
+        quiz = self.get_object(pk)
+        if  quit is None :
+          return Response({'error': 'update book category not found'}, status=status.HTTP_404_NOT_FOUND)
+        serializer = QuizSerializer(quiz, data= request.data)
+        if serializer.is_valid() :
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def delete(self,  pk):
+        quit = self.get_object(pk)
+        if quit is None:
+            return Response({'error': 'delete quiz not found'}, status=status.HTTP_404_NOT_FOUND)   
+        quit.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
+class QuestionTest(APIView) :
+    #permission_classes = [IsAuthenticated]
+    def get(self, request):
+        lesson_id = request.query_params.get('lesson_id')
+
+        questions = Question.objects.all()
+
+        if lesson_id:
+            questions = questions.filter(
+                quiz__lesson_id=lesson_id
+            )
+
+        serializer = QuestionSerializer(
+            questions,
+            many=True
+        )
+
+        return Response(serializer.data)
+    
+    def post(self,request) :
+        serializer = QuestionSerializer(data = request.data)
+        if serializer.is_valid() :
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        print(serializer.errors, "error")
+        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+    
+class QuestionTestDetail(APIView):
+    permission_classes = [IsAuthenticated]
+    def get_object(self ,pk):
+        try :
+            return Question.objects.get(pk=pk)
+        except Question.DoesNotExist :
+            return None
+    
+    def put(self ,request, pk) :
+        question = self.get_object(pk)
+        if question is None :
+            return Response({'error': 'update Question not found'}, status=status.HTTP_404_NOT_FOUND)
+        serializer = QuestionSerializer(question, data = request.data)
+        if serializer.is_valid() :
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def delete(self,request,pk) :
+        question =self.get_object(pk)
+        if question is None :
+             return Response({'error': 'delete quiztion not found'}, status=status.HTTP_404_NOT_FOUND)   
+        question.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+class ChoiceTest(APIView) :
+    # permission_classes = [IsAuthenticated]
+    def get(self, request):
+        #in model រសេរតែ lesson ប៉ុណ្ណោះ ប៉ុន្តែ Django បង្កើត Field មួយទៀតក្នុង Database ដោយស្វ័យប្រវត្តិឈ្មោះ:lesson_id
+        #ទៅរក parameter ឈ្មោះ lesson_id ក្នុង URL ហើយយកតម្លៃរបស់វាមក
+        lesson_id = request.query_params.get('lesson_id')
+        choices = Choice.objects.all()
+        if lesson_id:
+            choices = choices.filter(
+                question__quiz__lesson_id=lesson_id # Choice → Question → Quiz → យក lesson_id
+                #ដេីម្បីJOIN Table ទាំង 3 ដោយស្វ័យប្រវត្តិ ដើម្បីរក Choice ដែលស្ថិតក្នុង Lesson ជាក់លាក់មួយ
+            )
+
+        serializer = ChoiceSerializer(
+            choices,
+            many=True
+        )
+
+        return Response(serializer.data)
+    
+    def post(self, request) :
+        serializer = ChoiceSerializer(data = request.data)
+        if serializer.is_valid() :
+            serializer.save()
+            return Response(serializer.data,status=status.HTTP_201_CREATED)
+        print(serializer.errors)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class ChoiceTestDetail(APIView) :
+    permission_classes = [IsAuthenticated]
+    def get_object(self, pk) :
+        try :
+            return Choice.objects.get(pk=pk)
+        except Choice.DoesNotExist :
+            return None
+        
+    def put(self ,request,pk) :
+        choice = self.get_object(pk)
+        if choice is None :
+            return Response({'error': 'update Choice not found'}, status=status.HTTP_404_NOT_FOUND)
+        serializer = ChoiceSerializer(choice, data = request.data)
+        if serializer.is_valid() :
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def delete(self,pk) :
+        choice =self.get_object(pk)
+        if choice is None :
+             return Response({'error': 'delete quiztion not found'}, status=status.HTTP_404_NOT_FOUND)   
+        choice.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+class QuizSubmissionTest(APIView) :
+    permission_classes = [IsAuthenticated]
+    def get(self, request) :
+       try :
+          quiz_submissions = QuizSubmission.objects.filter(user=request.user).order_by('-submitted_at')
+          serializer = QuizSubmissionSerializer(quiz_submissions, many=True)
+          return Response(serializer.data, status=status.HTTP_200_OK)
+       except Exception as e :
+           print(f" Error fetching submissions: {e}")
+           return Response({"error": "មិនអាចទាញយកប្រវត្តិពិន្ទុបានទេ"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+       
+    def post(self, request):
+        lesson_id = request.data.get('lesson_id')
+        user_answers = request.data.get('answers', []) # ជាប្រភេទ List លទ្ធផលឆ្លើយ
+        
+        if not user_answers:
+            return Response({"error": "មិនមានចម្លើយត្រូវបានផ្ញើមកទេ"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        correct_answers_count = 0
+        total_questions = len(user_answers)
+        
+        # រត់ Loop ផ្ទៀងផ្ទាត់ចម្លើយរបស់សិស្សជាមួយ Database
+        for ans in user_answers:
+            q_id = ans.get('question_id')
+            c_id = ans.get('choice_id')
+            
+            #  ពិនិត្យមើលក្នុងប្រព័ន្ធថា តើ Choice ID នេះជាចម្លើយដែលត្រឹមត្រូវ (is_correct=True) របស់សំណួរនេះមែនទេ?
+            #  ត្រូវផ្ទៀងផ្ទាត់ឈ្មោះ field 'is_correct' ឱ្យត្រូវតាម Choice Model របស់អ្នក
+            is_correct = Choice.objects.filter(id=c_id, question_id=q_id, is_correct=True).exists()
+            
+            if is_correct:
+                correct_answers_count += 1
+                
+        #  ៣. គណនាភាគរយពិន្ទុពេញ ១០០ ផ្អែកលើចំនួនឆ្លើយត្រូវ
+        score = int((correct_answers_count / total_questions) * 100) if total_questions > 0 else 0
+        
+        try:
+            #  ៤. បង្កើត និងរក្សាទុកសន្លឹកកិច្ចការចូលទៅក្នុង QuizSubmission Model
+            #  ប្រសិនបើប្រើ AllowAny ហើយមិនទាន់មាន User Login ទេ អាចជំនួស request.user ដោយ User គំរូណាមួយសិនដើម្បីតេស្ត
+            submission = QuizSubmission.objects.create(
+                user=request.user if request.user.is_authenticated else None, 
+                quiz_id=lesson_id, # ភ្ជាប់ទៅកាន់ ID វិញ្ញាសា/មេរៀន
+                score=score,
+                total_questions=total_questions,
+                correct_answers=correct_answers_count
+            )
+            
+            #  ហុចលទ្ធផលពិន្ទុដែលគណនារួចត្រឡប់ទៅឱ្យ Flutter
+            return Response({
+                "score": score,
+                "total_questions": total_questions,
+                "correct_answers": correct_answers_count,
+                "message": "ប្រឡង និងរក្សាទុកពិន្ទុជោគជ័យ!"
+            }, status=status.HTTP_201_CREATED)
+            
+        except Exception as e:
+            print(f" Error saving submission: {e}")
+            return Response({"error": "ការរក្សាទុកពិន្ទុចូល Database មានបញ្ហា"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        
+
+    
+
+
+
+
+
+       
+
+       
+        
+
+
+
+
 
         
 

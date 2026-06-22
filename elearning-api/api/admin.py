@@ -7,6 +7,7 @@ from .models import (
     Quiz,
     Choice,
     QuizSubmission,
+    MainCourse
 )
 
 admin.site.register(CourseName)
@@ -18,4 +19,5 @@ admin.site.register(Notification)
 admin.site.register(Quiz),
 admin.site.register(Question),
 admin.site.register(Choice),
-admin.site.register(QuizSubmission)
+admin.site.register(QuizSubmission),
+admin.site.register(MainCourse)

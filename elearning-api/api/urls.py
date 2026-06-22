@@ -1,5 +1,17 @@
 from django.urls import path
-from .views import FullCourseDetail, Register, Login, CourseCategory, CourseCategoryDetail,FullCourselist,Profile,VideoListView,VideoLisetDatail,CategoryBook,CategoryBookDetail,BookLibrary,BookLibraryDetail,NotificationApp,GoogleLogin, FacebookLogin, GitHubLogin
+from .views import (
+    FullCourseDetail, Register, Login, 
+    CourseCategory, CourseCategoryDetail,
+    FullCourselist,Profile,VideoListView,
+    VideoLisetDatail,CategoryBook,
+    CategoryBookDetail,QuizTest,
+    BookLibrary,BookLibraryDetail,
+    NotificationApp,GoogleLogin, 
+    FacebookLogin, GitHubLogin,
+    QuizTestDetail,QuestionTest,
+    QuestionTestDetail,ChoiceTest,
+    ChoiceTestDetail, QuizSubmissionTest
+)
 from rest_framework_simplejwt.views import TokenRefreshView
 urlpatterns = [
     path('register/', Register.as_view()),
@@ -20,5 +32,12 @@ urlpatterns = [
     path('auth/google/', GoogleLogin.as_view()),
     path('auth/facebook/', FacebookLogin.as_view()),
     path('auth/github/', GitHubLogin.as_view()),
+    path('quiz/', QuizTest.as_view()),
+    path('quiz/',QuizTestDetail.as_view()),
+    path('question/', QuestionTest.as_view()),
+    path('question/<int:pk>/', QuestionTestDetail.as_view()),
+    path('choice/', ChoiceTest.as_view()),
+    path('choice/<int:pk>/', ChoiceTestDetail.as_view()),
+    path('submite/',  QuizSubmissionTest.as_view()),
 
 ]
