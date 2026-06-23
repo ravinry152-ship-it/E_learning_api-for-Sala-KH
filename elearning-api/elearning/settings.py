@@ -30,7 +30,11 @@ SECRET_KEY = 'django-insecure-_(#*fl#%0$m+a_t88a4vvx@uuztxt%f%9d))bf7s_(_&rm5h20
 DEBUG = True
 
 # ALLOWED_HOSTS = []
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '10.0.2.2']
+ALLOWED_HOSTS = [
+    'e-learning-api-for-sala-kh.onrender.com',
+    'localhost',
+    '127.0.0.1',
+]
 
 
 # Application definition
