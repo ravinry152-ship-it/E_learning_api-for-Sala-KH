@@ -110,16 +110,28 @@ USE_I18N = True
 USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
+# settings.py
+
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# --- Supabase Storage Configuration (Media Files) ---
-SUPABASE_URL = 'https://csnkeiucsvjamzjocgtz.supabase.co'
-SUPABASE_STORAGE_BUCKET_NAME = 'media'
-SUPABASE_KEY = os.environ.get('SUPABASE_KEY')
-DEFAULT_FILE_STORAGE = 'supabase_storage.storage.SupabaseStorage'
-MEDIA_URL = f"{SUPABASE_URL}/storage/v1/object/public/{SUPABASE_STORAGE_BUCKET_NAME}/"
+# --- ការកំណត់ Supabase តាមរយៈ S3 Storage (Media Files) ---
+# លុបកូដដែលប្រើ SUPABASE_URL, SUPABASE_KEY ចាស់ចោល រួចជំនួសដោយ៖
+
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+AWS_S3_ENDPOINT_URL = 'https://csnkeiucsvjamzjocgtz.storage.supabase.co/storage/v1/s3'
+AWS_STORAGE_BUCKET_NAME = 'media'
+AWS_S3_REGION_NAME = 'us-west-1'
+AWS_S3_SIGNATURE_VERSION = 's3v4'
+
+# ទាញយកសោរគន្លឹះ S3 ដែលអ្នកបានបង្កើតក្នុងផ្ទាំង Pop-up ពី Environment របស់ Render
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+
+# URL ផ្លូវការសម្រាប់ហុចរូបភាពទៅឱ្យ Flutter App បង្ហាញ
+MEDIA_URL = f"https://csnkeiucsvjamzjocgtz.supabase.co/storage/v1/object/public/{AWS_STORAGE_BUCKET_NAME}/"
 
 # REST Framework
 REST_FRAMEWORK = {

@@ -12,5 +12,6 @@ gunicorn
 whitenoise
 django-supabase-storage>=0.1.2
 whitenoise>=6.6.0
+django-storages[boto3]>=1.14
 
 # pip install -r requirements.txt
