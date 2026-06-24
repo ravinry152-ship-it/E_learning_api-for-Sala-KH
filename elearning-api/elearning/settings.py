@@ -122,20 +122,20 @@ STORAGES = {
 AWS_S3_ENDPOINT_URL = 'https://csnkeiucsvjamzjocgtz.storage.supabase.co/storage/v1/s3'
 AWS_STORAGE_BUCKET_NAME = 'media'
 
-# ការកំណត់លំនាំដើមរបស់ AWS សម្រាប់ Supabase S3
+# 🌟 ថែមបន្ទាត់នេះចូលដាច់ខាត ដើម្បីឱ្យ Django បង្កើត Link ត្រូវទម្រង់ Public របស់ Supabase 🌟
+AWS_S3_CUSTOM_DOMAIN = 'csnkeiucsvjamzjocgtz.supabase.co/storage/v1/object/public/media'
+
 AWS_S3_REGION_NAME = 'us-east-1'
 AWS_S3_SIGNATURE_VERSION = 's3v4'
 
-# ការពារកុំឱ្យបង្កើត Link ផុតកំណត់ និងការពារការជាន់ឈ្មោះឯកសារ
 AWS_QUERYSTRING_AUTH = False
 AWS_S3_FILE_OVERWRITE = False
 
-# ទាញយកសោរគន្លឹះ S3 ពី Environment របស់ Render
 AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
 
-# URL សម្រាប់ហុចទៅឱ្យ Flutter App បង្ហាញជាសាធារណៈ
-MEDIA_URL = f"https://csnkeiucsvjamzjocgtz.supabase.co/storage/v1/object/public/{AWS_STORAGE_BUCKET_NAME}/"
+# កែត្រង់នេះឱ្យប្រើ CUSTOM_DOMAIN វិញ
+MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/"
 
 # REST Framework
 REST_FRAMEWORK = {
