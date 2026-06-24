@@ -109,7 +109,14 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # --- ការកំណត់ Supabase តាមរយៈ S3 Storage (Media Files) ---
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+STORAGES = {
+    "default": {
+        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 # ទម្រង់ Endpoint ត្រឹមត្រូវសម្រាប់ Supabase S3
 AWS_S3_ENDPOINT_URL = 'https://csnkeiucsvjamzjocgtz.storage.supabase.co/storage/v1/s3'
