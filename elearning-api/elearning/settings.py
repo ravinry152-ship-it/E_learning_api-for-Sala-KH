@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.facebook',
     'dj_rest_auth',
     'dj_rest_auth.registration',
-   'storages',
+    'storages',
 ]
 
 SITE_ID = 1
@@ -80,12 +80,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'elearning.wsgi.application'
-#  DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
 
 # Database Configuration
 DATABASES = {
@@ -110,8 +104,6 @@ USE_I18N = True
 USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
-# settings.py
-
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
@@ -119,15 +111,15 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # --- ការកំណត់ Supabase តាមរយៈ S3 Storage (Media Files) ---
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
-# កែត្រង់នេះ៖ យកត្រឹម Domain ធំរបស់ Supabase S3 (ដកផ្លូវ /storage/v1/s3 ចេញ)
-AWS_S3_ENDPOINT_URL = 'https://csnkeiucsvjamzjocgtz.storage.supabase.co'
+# ទម្រង់ Endpoint ត្រឹមត្រូវសម្រាប់ Supabase S3
+AWS_S3_ENDPOINT_URL = 'https://csnkeiucsvjamzjocgtz.storage.supabase.co/storage/v1/s3'
 AWS_STORAGE_BUCKET_NAME = 'media'
 
-# សម្រាប់ Supabase S3 ត្រូវកំណត់លំនាំដើមរបស់ AWS បែបនេះទើបវាស្គាល់
+# ការកំណត់លំនាំដើមរបស់ AWS សម្រាប់ Supabase S3
 AWS_S3_REGION_NAME = 'us-east-1'
 AWS_S3_SIGNATURE_VERSION = 's3v4'
 
-# បន្ថែម ២ បន្ទាត់នេះ៖ ការពារកុំឱ្យវាបង្កើត Link ផុតកំណត់ និងកុំឱ្យជាន់ឈ្មោះគ្នាខូចផ្លូវ
+# ការពារកុំឱ្យបង្កើត Link ផុតកំណត់ និងការពារការជាន់ឈ្មោះឯកសារ
 AWS_QUERYSTRING_AUTH = False
 AWS_S3_FILE_OVERWRITE = False
 
@@ -135,8 +127,9 @@ AWS_S3_FILE_OVERWRITE = False
 AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
 
-# URL ផ្លូវការសម្រាប់ហុចទៅឱ្យ Flutter App បង្ហាញជាសាធារណៈ
+# URL សម្រាប់ហុចទៅឱ្យ Flutter App បង្ហាញជាសាធារណៈ
 MEDIA_URL = f"https://csnkeiucsvjamzjocgtz.supabase.co/storage/v1/object/public/{AWS_STORAGE_BUCKET_NAME}/"
+
 # REST Framework
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
