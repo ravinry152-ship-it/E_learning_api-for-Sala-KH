@@ -16,7 +16,7 @@ import os
 import dj_database_url
 from dotenv import load_dotenv  
 load_dotenv()           
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+# Build paths inside the project like this: BASE_DIR / 'subdir'.STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -67,6 +67,7 @@ SITE_ID = 1
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -210,3 +211,11 @@ SOCIALACCOUNT_PROVIDERS = {
         },
     }
 }
+import os
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+SUPABASE_URL = 'https://csnkeiucsvjamzjocgtz.supabase.co'
+SUPABASE_STORAGE_BUCKET_NAME = 'media'
+SUPABASE_KEY = os.environ.get('SUPABASE_KEY')
+DEFAULT_FILE_STORAGE = 'supabase_storage.storage.SupabaseStorage'
+MEDIA_URL = f"{SUPABASE_URL}/storage/v1/object/public/{SUPABASE_STORAGE_BUCKET_NAME}/"

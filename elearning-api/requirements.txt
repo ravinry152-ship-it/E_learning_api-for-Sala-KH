@@ -9,5 +9,8 @@ psycopg2-binary>=2.9.0,<3.0.0
 Pillow>=10.0.0,<11.0.0
 dj-rest-auth>=6.0.0
 gunicorn
+whitenoise
+django-supabase-storage>=0.1.2
+whitenoise>=6.6.0
 
 # pip install -r requirements.txt
