@@ -67,7 +67,7 @@ class QuestionSerializer(serializers.ModelSerializer):
     choices = ChoiceSerializer(many=True, read_only=True)
     class Meta:
         model = Question
-        fields = ['id', 'question_text', 'order', 'choices']
+        fields = ['id','quiz','question_text', 'order', 'choices']
 
 class QuizSubmissionSerializer(serializers.ModelSerializer) :
     quiz_title = QuizSerializer(read_only=True)
