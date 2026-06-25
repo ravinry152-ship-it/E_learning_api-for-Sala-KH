@@ -437,7 +437,7 @@ class QuizTestDetail(APIView) :
         return Response(status=status.HTTP_204_NO_CONTENT)
     
 class QuestionTest(APIView) :
-    #permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     def get(self, request):
         lesson_id = request.query_params.get('lesson_id')
 
@@ -489,7 +489,7 @@ class QuestionTestDetail(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 class ChoiceTest(APIView) :
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     def get(self, request):
         #in model រសេរតែ lesson ប៉ុណ្ណោះ ប៉ុន្តែ Django បង្កើត Field មួយទៀតក្នុង Database ដោយស្វ័យប្រវត្តិឈ្មោះ:lesson_id
         #ទៅរក parameter ឈ្មោះ lesson_id ក្នុង URL ហើយយកតម្លៃរបស់វាមក
@@ -553,7 +553,7 @@ class QuizSubmissionTest(APIView) :
            return Response({"error": "មិនអាចទាញយកប្រវត្តិពិន្ទុបានទេ"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
        
     def post(self, request):
-        lesson_id = request.data.get('lesson_id')
+        quiz_id = request.data.get('quiz_id')
         user_answers = request.data.get('answers', []) # ជាប្រភេទ List លទ្ធផលឆ្លើយ
         
         if not user_answers:
@@ -582,7 +582,7 @@ class QuizSubmissionTest(APIView) :
             #  ប្រសិនបើប្រើ AllowAny ហើយមិនទាន់មាន User Login ទេ អាចជំនួស request.user ដោយ User គំរូណាមួយសិនដើម្បីតេស្ត
             submission = QuizSubmission.objects.create(
                 user=request.user if request.user.is_authenticated else None, 
-                quiz_id=lesson_id, # ភ្ជាប់ទៅកាន់ ID វិញ្ញាសា/មេរៀន
+                quiz_id=quiz_id, # ភ្ជាប់ទៅកាន់ ID វិញ្ញាសា/មេរៀន
                 score=score,
                 total_questions=total_questions,
                 correct_answers=correct_answers_count

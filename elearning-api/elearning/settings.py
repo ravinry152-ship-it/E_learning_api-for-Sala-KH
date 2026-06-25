@@ -79,7 +79,13 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'elearning.wsgi.application'
+# WSGI_APPLICATION = 'elearning.wsgi.application'
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
 # Database Configuration
 DATABASES = {
@@ -122,7 +128,7 @@ STORAGES = {
 AWS_S3_ENDPOINT_URL = 'https://csnkeiucsvjamzjocgtz.storage.supabase.co/storage/v1/s3'
 AWS_STORAGE_BUCKET_NAME = 'media'
 
-# 🌟 ថែមបន្ទាត់នេះចូលដាច់ខាត ដើម្បីឱ្យ Django បង្កើត Link ត្រូវទម្រង់ Public របស់ Supabase 🌟
+#  ថែមបន្ទាត់នេះចូលដាច់ខាត ដើម្បីឱ្យ Django បង្កើត Link ត្រូវទម្រង់ Public របស់ Supabase 
 AWS_S3_CUSTOM_DOMAIN = 'csnkeiucsvjamzjocgtz.supabase.co/storage/v1/object/public/media'
 
 AWS_S3_REGION_NAME = 'us-east-1'
