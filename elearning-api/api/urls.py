@@ -33,7 +33,7 @@ urlpatterns = [
     path('auth/facebook/', FacebookLogin.as_view()),
     path('auth/github/', GitHubLogin.as_view()),
     path('quiz/', QuizTest.as_view()),
-    path('quiz/',QuizTestDetail.as_view()),
+    path('quiz/<int:pk>/',QuizTestDetail.as_view()),
     path('question/', QuestionTest.as_view()),
     path('question/<int:pk>/', QuestionTestDetail.as_view()),
     path('choice/', ChoiceTest.as_view()),
