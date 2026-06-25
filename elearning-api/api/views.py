@@ -436,23 +436,27 @@ class QuizTestDetail(APIView) :
         quit.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
     
-class QuestionTest(APIView) :
+class QuestionTest(APIView):
     permission_classes = [IsAuthenticated]
+    
     def get(self, request):
+        # ១. ចាប់យក lesson_id ពី URL Parameter (?lesson_id=3)
         lesson_id = request.query_params.get('lesson_id')
 
-        questions = Question.objects.all()
-
         if lesson_id:
-            questions = questions.filter(
-                quiz__lesson_id=lesson_id
-            )
+            # ២. ទាញយកគ្រប់ Quiz ID ទាំងឡាយណាដែលបង្កើតឡើងសម្រាប់ Lesson ID នេះ
+            quiz_ids = Quiz.objects.filter(lesson_id=lesson_id).values_list('id', flat=True)
+            
+            # ៣. Filter យកតែសំណួរណាដែលមាន quiz_id ស្ថិតនៅក្នុងលទ្ធផលខាងលើ
+            questions = Question.objects.filter(quiz_id__in=quiz_ids)
+            
+            #  សម្រាប់ Debug មើលលើ Terminal របស់ Django
+            print(f" Local Test -> Lesson ID: {lesson_id} | រកឃើញ Quiz IDs: {list(quiz_ids)} | ចំនួនសំណួរ: {questions.count()}")
+        else:
+            # បើគ្មានការបញ្ជូន lesson_id មកទេ ឱ្យបង្ហាញទាំងអស់
+            questions = Question.objects.all()
 
-        serializer = QuestionSerializer(
-            questions,
-            many=True
-        )
-
+        serializer = QuestionSerializer(questions, many=True)
         return Response(serializer.data)
     
     def post(self,request) :
