@@ -19,6 +19,7 @@ ALLOWED_HOSTS = [
     'e-learning-api-for-sala-kh.onrender.com',
     'localhost',
     '127.0.0.1',
+    'e-learning-api-for-sala-kh-own7.onrender.com',
 ]
 
 # Application definition
